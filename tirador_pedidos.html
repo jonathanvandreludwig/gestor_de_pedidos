@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tirador de Pedidos</title>
+<title>Pedidos Imbur</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -62,6 +62,9 @@ td:nth-child(7),th:nth-child(7){width:44px;}
 .add-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;font-size:16px;transition:background .1s;}
 .add-btn:hover{background:var(--accent-light);}
 .no-results{text-align:center;color:var(--muted);padding:2rem;font-size:14px;}
+.in-cart-badge{display:inline-flex;align-items:center;gap:2px;background:var(--accent-light);color:var(--accent);font-size:10px;font-weight:600;padding:1px 5px;border-radius:20px;margin-top:5px;}
+tr.in-cart td{background:#f4fbf6;}
+tr.in-cart:hover td{background:#edf7f0;}
 
 /* Cart */
 .cart-empty{text-align:center;color:var(--muted);padding:3rem 0;font-size:14px;}
@@ -119,6 +122,8 @@ td:nth-child(7),th:nth-child(7){width:44px;}
 .cliente-info{display:flex;align-items:center;justify-content:space-between;background:var(--accent-light);border-radius:var(--radius);padding:10px 14px;margin-bottom:20px;font-size:13px;}
 .cliente-nome{font-weight:600;color:var(--accent);}
 .cliente-editar{font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:var(--font);}
+.entrar-btn{padding:6px 16px;border:1px solid var(--accent);border-radius:var(--radius);background:none;color:var(--accent);font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all .15s;}
+.entrar-btn:hover{background:var(--accent);color:#fff;}
 
 /* Confetti e sucesso */
 .confetti-wrap{display:none;position:fixed;inset:0;z-index:999;pointer-events:none;}
@@ -137,16 +142,24 @@ td:nth-child(7),th:nth-child(7){width:44px;}
 </head>
 <body>
 <div class="container">
-  <div class="header">
-    <h1>🌿 Tirador de Pedidos</h1>
-    <p>Escolha a quantidade dos produtos, envie para o carrinho e mande para o nosso WhatsApp</p>
+  <div class="header" style="display:flex;justify-content:space-between;align-items:flex-start;">
+    <div>
+      <h1><img src="data:image/png;base64,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" style="height:32px;width:auto;vertical-align:middle;margin-right:8px;margin-bottom:14px;mix-blend-mode:multiply;">Pedidos Imbur</h1>
+      <p>Escolha a quantidade dos produtos, envie para o carrinho e mande para o nosso WhatsApp</p>
+    </div>
+    <div id="entrar-wrap" style="margin-top:4px;">
+      <button class="entrar-btn" id="entrar-btn" onclick="abrirLogin()" style="display:none">Entrar</button>
+    </div>
   </div>
 
   <!-- Info do cliente logado -->
   <div id="cliente-info-bar" style="display:none">
     <div class="cliente-info">
       <span class="cliente-nome" id="cliente-nome-bar"></span>
-      <button class="cliente-editar" onclick="editarCliente()">Editar dados</button>
+      <div style="display:flex;gap:10px;">
+        <button class="cliente-editar" onclick="editarCliente()">Editar dados</button>
+        <button class="cliente-editar" onclick="deslogar()">Não sou eu</button>
+      </div>
     </div>
   </div>
 
@@ -207,7 +220,7 @@ td:nth-child(7),th:nth-child(7){width:44px;}
 </div>
 
 <!-- Identificação -->
-<div class="id-overlay" id="id-overlay">
+<div class="id-overlay" id="id-overlay" style="display:none">
   <div class="id-box">
     <div class="id-titulo">👋 Olá! Antes de começar</div>
     <div class="id-sub">Precisamos de algumas informações para preparar seu pedido.</div>
@@ -261,7 +274,7 @@ async function confirmarIdentificacao(){
   const bairro=document.getElementById("id-bairro").value.trim();
   const telefone=document.getElementById("id-telefone").value.trim();
 
-  if(!nome||!cidade||!bairro){alert("Por favor, preencha nome, cidade e bairro.");return;}
+  if(!email||!telefone){alert("Por favor, preencha e-mail e número para contato.");return;}
 
   document.getElementById("id-loading").style.display="block";
 
@@ -276,8 +289,40 @@ async function confirmarIdentificacao(){
 
   document.getElementById("id-overlay").style.display="none";
   document.getElementById("id-loading").style.display="none";
+  mostrarClienteLogado();
+
+  // Salva no navegador para manter logado
+  localStorage.setItem("cliente", JSON.stringify(cliente));
+
+  // Se veio do botão enviar pedido, continua o fluxo
+  if(window._pedidoPendente){
+    window._pedidoPendente=false;
+    enviarPedido();
+  } else {
+    // Veio do botão Entrar — vai direto para Meus Pedidos
+    renderTable();
+    showTab("historico");
+    carregarHistorico();
+  }
+}
+
+function abrirLogin(){
+  document.getElementById("id-overlay").style.display="flex";
+}
+
+function mostrarClienteLogado(){
   document.getElementById("cliente-info-bar").style.display="block";
-  document.getElementById("cliente-nome-bar").textContent="👤 "+nome;
+  document.getElementById("cliente-nome-bar").textContent="Olá, "+cliente.nome+"! 👋";
+  document.getElementById("entrar-btn").style.display="none";
+}
+
+function deslogar(){
+  if(!confirm("Deseja sair da sua conta?"))return;
+  localStorage.removeItem("cliente");
+  cliente=null;
+  document.getElementById("cliente-info-bar").style.display="none";
+  document.getElementById("entrar-btn").style.display="block";
+  renderTable();
 }
 
 function editarCliente(){
@@ -304,7 +349,23 @@ function renderCats(){
     `<button class="cat-btn${c===activeCat?" active":""}" onclick="selectCat('${c}')">${c}</button>`
   ).join("");
 }
-function selectCat(c){activeCat=c;renderCats();renderTable();}
+function selectCat(c){activeCat=c;// Verificar se já existe cliente salvo no navegador
+(function(){
+  const salvo=localStorage.getItem("cliente");
+  if(salvo){
+    try{
+      cliente=JSON.parse(salvo);
+      mostrarClienteLogado();
+    }catch(e){
+      localStorage.removeItem("cliente");
+      document.getElementById("entrar-btn").style.display="block";
+    }
+  } else {
+    document.getElementById("entrar-btn").style.display="block";
+  }
+})();
+
+renderCats();renderTable();}
 
 function filtered(){
   const q=document.getElementById("search").value.toLowerCase();
@@ -327,9 +388,13 @@ function renderTable(){
   document.getElementById("no-results").style.display=list.length===0?"block":"none";
   document.getElementById("tbody").innerHTML=list.map(p=>{
     const uid="p"+p.cod,qty=getQty(p.cod);
-    return`<tr>
+    const noCarrinho=cart.filter(x=>x.cod===p.cod);
+    const qtdCarrinho=noCarrinho.reduce((a,b)=>a+b.qty,0);
+    const inCartClass=qtdCarrinho>0?" in-cart":"";
+    const inCartBadge=qtdCarrinho>0?`<br><span class="in-cart-badge">✓ No carrinho: ${qtdCarrinho>=1000?(qtdCarrinho/1000).toFixed(1)+"kg":qtdCarrinho+"g"}</span>`:"";
+    return`<tr class="${inCartClass}">
       <td><span class="cod">${p.cod}</span></td>
-      <td><div class="nome-cell">${p.nome}<br><span class="nome-min">mín. ${minPara(p)}g</span></div></td>
+      <td><div class="nome-cell">${p.nome}<br><span class="nome-min">mín. ${minPara(p)}g</span>${inCartBadge}</div></td>
       <td><span class="preco">${fmtPrice(p.kg)}</span></td>
       <td><span class="preco">${fmtPrice(p.g100)}</span></td>
       <td><div class="qty-ctrl">
@@ -354,7 +419,7 @@ function addToCart(cod){
   renderTable();
 }
 
-function removeFromCart(i){cart.splice(i,1);updateCartBadge();renderCart();}
+function removeFromCart(i){cart.splice(i,1);updateCartBadge();renderCart();renderTable();}
 
 function updateCartBadge(){
   const b=document.getElementById("cart-badge");
@@ -395,6 +460,12 @@ function abrirWhatsapp(){
 async function enviarPedido(){
   const txt=document.getElementById("wpp-texto").value;
   if(!txt)return;
+  // Se cliente ainda não se identificou, abre o formulário
+  if(!cliente){
+    window._pedidoPendente=true;
+    document.getElementById("id-overlay").style.display="flex";
+    return;
+  }
 
   // Salva pedido na planilha
   if(cliente){
@@ -409,7 +480,7 @@ async function enviarPedido(){
           email:cliente.email,
           cidade:cliente.cidade,
           bairro:cliente.bairro,
-          telefone:cliente.telefone||"",
+          telefone:cliente.telefone,
           itens:JSON.stringify(cart),
           total:fmtPrice(total)
         })
@@ -468,7 +539,7 @@ async function carregarHistorico(){
   if(!cliente){el.innerHTML='<div class="hist-empty">Faça sua identificação para ver seus pedidos.</div>';return;}
   el.innerHTML='<div class="hist-empty">Carregando...</div>';
   try{
-    const res=await fetch(`${API_URL}?action=buscarPedidos&nome=${encodeURIComponent(cliente.nome)}&email=${encodeURIComponent(cliente.email)}`);
+    const res=await fetch(`${API_URL}?action=buscarPedidos&email=${encodeURIComponent(cliente.email)}&telefone=${encodeURIComponent(cliente.telefone)}`);
     const data=await res.json();
     if(!data.ok||!data.pedidos.length){
       el.innerHTML='<div class="hist-empty">Nenhum pedido encontrado ainda.</div>';return;
@@ -536,6 +607,22 @@ function showTab(tab){
   if(tab==="carrinho")renderCart();
   if(tab==="historico")carregarHistorico();
 }
+
+// Verificar se já existe cliente salvo no navegador
+(function(){
+  const salvo=localStorage.getItem("cliente");
+  if(salvo){
+    try{
+      cliente=JSON.parse(salvo);
+      mostrarClienteLogado();
+    }catch(e){
+      localStorage.removeItem("cliente");
+      document.getElementById("entrar-btn").style.display="block";
+    }
+  } else {
+    document.getElementById("entrar-btn").style.display="block";
+  }
+})();
 
 renderCats();renderTable();
 </script>
