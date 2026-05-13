@@ -79,7 +79,13 @@ tr.in-cart:hover td{background:#edf7f0;}
 .cart-box{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:16px;}
 .cart-total-row{display:flex;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1.5px solid var(--border);font-weight:600;font-size:16px;}
 .cart-total-val{font-family:var(--mono);color:var(--accent);}
-.enviar-btn{margin-top:14px;width:100%;padding:12px;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;transition:background .15s;}
+.entrega-opcoes{display:flex;gap:10px;margin-top:14px;}
+.entrega-btn{flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--surface);font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;color:var(--muted);transition:all .15s;}
+.entrega-btn.ativo{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+.entrega-btn:hover{border-color:var(--accent);color:var(--accent);}
+.aviso-minimo{margin-top:10px;padding:10px 14px;border-radius:var(--radius);background:#FFF0E0;color:#C05C00;font-size:13px;font-weight:500;display:none;}
+.enviar-btn{margin-top:14px;width:100%;padding:12px;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;transition:background .15s;display:none;}
+.enviar-btn:hover{background:#235a40;}
 .enviar-btn:hover{background:#235a40;}
 
 /* WhatsApp */
@@ -102,7 +108,7 @@ tr.in-cart:hover td{background:#edf7f0;}
 .hist-data{font-size:12px;color:var(--muted);}
 .hist-status{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
 .hist-status.aguardando{background:#FFF0E0;color:#C05C00;}
-.hist-status.concluido{background:var(--accent-light);color:var(--accent);}
+.hist-status.concluido{background:#D8EDDF;color:#2D6A4F;}
 .hist-status.outros{background:#F0F0F0;color:#555;}
 .hist-item{font-size:13px;color:var(--muted);padding:3px 0;}
 .hist-total{display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-weight:600;font-size:14px;}
@@ -201,7 +207,12 @@ tr.in-cart:hover td{background:#edf7f0;}
           <span>Total do pedido</span>
           <span class="cart-total-val" id="cart-total-val"></span>
         </div>
-        <button class="enviar-btn" onclick="enviarPedido()">✅ Enviar pedido por WhatsApp</button>
+        <div class="entrega-opcoes">
+          <button class="entrega-btn" id="btn-entrega" onclick="selecionarEntrega('entrega')">🚚 Entrega</button>
+          <button class="entrega-btn" id="btn-retirada" onclick="selecionarEntrega('retirada')">🏪 Retirada</button>
+        </div>
+        <div class="aviso-minimo" id="aviso-minimo">⚠️ Pedido mínimo de R$ 50,00 para entrega. Adicione mais produtos ou escolha Retirada.</div>
+        <button class="enviar-btn" id="enviar-btn" onclick="enviarPedido()">✅ Enviar pedido por WhatsApp</button>
       </div>
     </div>
     <div class="wpp-section" id="wpp-section" style="display:none">
@@ -306,6 +317,27 @@ async function confirmarIdentificacao(){
     renderTable();
     showTab("historico");
     carregarHistorico();
+  }
+}
+
+var tipoEntrega = null;
+
+function selecionarEntrega(tipo){
+  tipoEntrega = tipo;
+  document.getElementById("btn-entrega").classList.toggle("ativo", tipo === "entrega");
+  document.getElementById("btn-retirada").classList.toggle("ativo", tipo === "retirada");
+
+  // Calcular total do carrinho
+  var total = cart.reduce(function(a,b){return a+b.val;}, 0);
+  var avisoEl = document.getElementById("aviso-minimo");
+  var enviarEl = document.getElementById("enviar-btn");
+
+  if(tipo === "entrega" && total < 50){
+    avisoEl.style.display = "block";
+    enviarEl.style.display = "none";
+  } else {
+    avisoEl.style.display = "none";
+    enviarEl.style.display = "block";
   }
 }
 
@@ -442,7 +474,8 @@ function gerarTextoWpp(){
   const c=cliente||{};
   const numStr=window._numeroPedido?` — Pedido #${window._numeroPedido}`:"";
   const info=c.nome?`👤 *${c.nome}*${c.email?" — "+c.email:""}\n📍 ${c.bairro}, ${c.cidade}${c.telefone?"\n📞 "+c.telefone:""}\n\n`:"";
-  return`🛒 *Pedido${numStr} — ${data}*\n\n${info}${linhas.join("\n")}\n\n*Total: ${fmtPrice(total)}*`;
+  var entregaStr=window.tipoEntrega==="entrega"?"🚚 Entrega":"🏪 Retirada";
+  return`🛒 *Pedido${numStr} — ${data}*\n\n${info}📦 ${entregaStr}\n\n${linhas.join("\n")}\n\n*Total: ${fmtPrice(total)}*`;
 }
 
 function copiarWpp(){
@@ -513,6 +546,11 @@ function renderCart(){
     summary.style.display="none";
     wppSection.style.display="none";
     wppTexto.value="";
+    tipoEntrega=null;
+    document.getElementById("btn-entrega").classList.remove("ativo");
+    document.getElementById("btn-retirada").classList.remove("ativo");
+    document.getElementById("aviso-minimo").style.display="none";
+    document.getElementById("enviar-btn").style.display="none";
     return;
   }
 
