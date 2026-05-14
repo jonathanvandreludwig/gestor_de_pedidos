@@ -75,8 +75,8 @@ td:nth-child(7),th:nth-child(7){width:36px;}
     margin-bottom:8px;
     padding:8px 12px;
     display:grid;
-    grid-template-columns:90px 1fr 44px;
-    grid-template-rows:auto auto auto;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-rows:auto auto auto auto;
     gap:6px 0;
   }
   tr.in-cart{background:#f4fbf6;}
@@ -96,7 +96,7 @@ td:nth-child(7),th:nth-child(7){width:36px;}
     grid-column:1;grid-row:2;
     font-size:11px;color:var(--muted);
     flex-direction:column;align-items:flex-start;
-    padding-left:14px;
+    padding-left:10px;
   }
   td:nth-child(3)::before{content:"kg";font-size:10px;color:var(--faint);}
 
@@ -105,7 +105,7 @@ td:nth-child(7),th:nth-child(7){width:36px;}
     grid-column:1;grid-row:3;
     font-size:11px;color:var(--muted);
     flex-direction:column;align-items:flex-start;
-    padding-left:14px;
+    padding-left:10px;
   }
   td:nth-child(4)::before{content:"100g";font-size:10px;color:var(--faint);}
 
@@ -117,6 +117,7 @@ td:nth-child(7),th:nth-child(7){width:36px;}
     justify-content:center;
     align-items:center;
   }
+
   td:nth-child(5) .qty-ctrl{
     display:flex;
     flex-direction:row;
@@ -148,17 +149,23 @@ td:nth-child(7),th:nth-child(7){width:36px;}
 
   /* Carrinho: linhas 2 e 3, col direita */
   td:nth-child(7){
-    grid-column:3;grid-row:2/4;
+    grid-column:1/4;grid-row:3;
     justify-content:center;
     align-items:center;
+    margin-top:4px;
   }
   td:nth-child(7) button{
     display:flex!important;
-    width:36px!important;height:36px!important;
-    font-size:18px!important;
+    width:auto!important;height:36px!important;
+    font-size:13px!important;font-weight:600!important;
+    padding:0 10px!important;
     background:var(--accent-light)!important;
     border-color:var(--accent)!important;
+    color:var(--accent)!important;
+    white-space:nowrap;
+    gap:5px;
   }
+  td:nth-child(7) button::after{content:" Adicionar";}
 }
 .in-cart-badge{display:inline-flex;align-items:center;gap:2px;background:var(--accent-light);color:var(--accent);font-size:10px;font-weight:600;padding:1px 5px;border-radius:20px;margin-top:5px;}
 tr.in-cart td{background:#f4fbf6;}
