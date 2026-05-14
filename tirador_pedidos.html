@@ -637,6 +637,19 @@ async function enviarPedido(){
     }catch(e){}
   }
 
+  // Salvar pedido localmente
+  var pedidosLocais=JSON.parse(localStorage.getItem("pedidos_locais")||"[]");
+  var total=0;
+  cart.forEach(function(i){total+=i.val;});
+  pedidosLocais.unshift({
+    numero:window._numeroPedido||"?",
+    data:new Date().toLocaleDateString("pt-BR")+" "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),
+    itens:JSON.stringify(cart),
+    total:fmtPrice(total),
+    status:"Aguardando separação"
+  });
+  localStorage.setItem("pedidos_locais",JSON.stringify(pedidosLocais));
+
   window.open("https://wa.me/5548991446378?text="+encodeURIComponent(txt),"_blank","noopener");
   lancarConfetti();
   document.getElementById("sucesso-overlay").classList.add("ativo");
@@ -688,50 +701,34 @@ function carregarHistorico(){
     el.innerHTML='<div class="hist-empty">Faça sua identificação para ver seus pedidos.</div>';
     return;
   }
-  el.innerHTML='<div class="hist-empty">Carregando...</div>';
 
-  // Remove script JSONP anterior
-  const oldScript=document.getElementById("jsonp-script");
-  if(oldScript)oldScript.remove();
+  // Carregar pedidos salvos localmente
+  var pedidosLocais=JSON.parse(localStorage.getItem("pedidos_locais")||"[]");
+  
+  if(!pedidosLocais.length){
+    el.innerHTML='<div class="hist-empty">Nenhum pedido encontrado ainda.</div>';
+    return;
+  }
 
-  // Callback global que processa a resposta
-  window._jsonpCallback=function(data){
-    if(!data.ok||!data.pedidos.length){
-      el.innerHTML='<div class="hist-empty">Nenhum pedido encontrado ainda.</div>';
-      return;
-    }
-    el.innerHTML=data.pedidos.map(function(p){
-      var itens=[];
-      try{itens=JSON.parse(p.itens);}catch(e){}
-      var statusClass=p.status==="Aguardando separação"?"aguardando":p.status==="Pedido concluído"?"concluido":"outros";
-      return'<div class="hist-card">'+
-        '<div class="hist-header">'+
-          '<div>'+
-            '<div class="hist-id">Pedido #'+p.numero+'</div>'+
-            '<div class="hist-data">'+p.data+'</div>'+
-          '</div>'+
-          '<span class="hist-status '+statusClass+'">'+p.status+'</span>'+
+  el.innerHTML=pedidosLocais.map(function(p){
+    var itens=[];
+    try{itens=JSON.parse(p.itens);}catch(e){}
+    var statusClass=p.status==="Aguardando separação"?"aguardando":p.status==="Pedido concluído"?"concluido":"outros";
+    return'<div class="hist-card">'+
+      '<div class="hist-header">'+
+        '<div>'+
+          '<div class="hist-id">Pedido #'+p.numero+'</div>'+
+          '<div class="hist-data">'+p.data+'</div>'+
         '</div>'+
-        itens.map(function(i){
-          var qtdFmt=i.qty>=1000?(i.qty/1000).toFixed(1).replace(".",",")+"kg":i.qty+"g";
-          return'<div class="hist-item">• '+i.nome+' — '+qtdFmt+'</div>';
-        }).join("")+
-        '<div class="hist-total"><span>Total</span><span class="hist-total-val">'+p.total+'</span></div>'+
-      '</div>';
-    }).join("");
-  };
-
-  // Criar tag script para JSONP
-  var script=document.createElement("script");
-  script.id="jsonp-script";
-  script.src=API_URL+"?action=buscarPedidos"+
-    "&email="+encodeURIComponent(cliente.email)+
-    "&telefone="+encodeURIComponent(cliente.telefone)+
-    "&callback=_jsonpCallback";
-  script.onerror=function(){
-    el.innerHTML='<div class="hist-empty">Erro ao carregar. Tente novamente.</div>';
-  };
-  document.body.appendChild(script);
+        '<span class="hist-status '+statusClass+'">'+p.status+'</span>'+
+      '</div>'+
+      itens.map(function(i){
+        var qtdFmt=i.qty>=1000?(i.qty/1000).toFixed(1).replace(".",",")+"kg":i.qty+"g";
+        return'<div class="hist-item">• '+i.nome+' — '+qtdFmt+'</div>';
+      }).join("")+
+      '<div class="hist-total"><span>Total</span><span class="hist-total-val">'+p.total+'</span></div>'+
+    '</div>';
+  }).join("");
 }
 
 // ── Confetti & Sucesso ────────────────────────────────────
