@@ -80,6 +80,7 @@ td:nth-child(7),th:nth-child(7){width:36px;}
     gap:8px 0;
     position:relative;
     overflow:hidden;
+    min-height:88px;
   }
   tr.in-cart{background:#f4fbf6;}
   td{padding:0;border:none;display:flex;align-items:center;}
@@ -92,22 +93,23 @@ td:nth-child(7),th:nth-child(7){width:36px;}
     text-align:center;font-size:13px;font-weight:600;
   }
 
-  /* Preço kg: linha 2, coluna esquerda */
+  /* Preço kg: posicionado absolutamente — alinhado com borda SUPERIOR do botão */
   td:nth-child(3){
-    grid-column:1;grid-row:2;
-    flex-direction:column;align-items:flex-start;justify-content:center;
+    position:absolute;
+    left:12px;
+    top:calc(50% - 34px);
+    flex-direction:column;align-items:flex-start;
     font-size:11px;color:var(--muted);
-    padding-left:8px;
-    margin-top:-8px;
   }
   td:nth-child(3)::before{content:"kg";font-size:10px;color:var(--faint);}
 
+  /* Preço 100g: posicionado absolutamente — alinhado com borda INFERIOR do botão */
   td:nth-child(4){
-    grid-column:1;grid-row:3;
-    flex-direction:column;align-items:flex-start;justify-content:flex-start;
-    margin-top:-8px;
+    position:absolute;
+    left:12px;
+    top:calc(50% + 22px);
+    flex-direction:column;align-items:flex-start;
     font-size:11px;color:var(--muted);
-    padding-left:8px;
   }
   td:nth-child(4)::before{content:"100g";font-size:10px;color:var(--faint);}
 
