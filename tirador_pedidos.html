@@ -6,7 +6,7 @@
 <title>Pedidos Imbur</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;outline:none !important;}
 :root{
   --bg:#F7F5F2;--surface:#FFFFFF;--border:#E2DDD8;--text:#1C1917;
   --muted:#78716C;--faint:#A8A29E;--accent:#2D6A4F;--accent-light:#D8EDDF;
@@ -43,6 +43,8 @@ th{padding:7px 6px;text-align:left;font-size:10px;font-weight:600;color:var(--mu
 td{padding:7px 6px;border-bottom:1px solid #F0EDE9;vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:#FAFAF9;}
+tr:focus-within{outline:none;box-shadow:none;}
+*:focus{outline:none;box-shadow:none;}
 td:nth-child(1),th:nth-child(1){width:36px;}
 td:nth-child(2),th:nth-child(2){min-width:100px;}
 td:nth-child(3),th:nth-child(3){width:58px;}
@@ -57,6 +59,7 @@ td:nth-child(7),th:nth-child(7){width:36px;}
 .qty-ctrl{display:inline-flex;align-items:center;gap:6px;}
 .qty-btn{width:24px;height:24px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text);flex-shrink:0;line-height:1;transition:background .1s;}
 .qty-btn:hover{background:var(--bg);}
+.qty-btn:focus,.add-btn:focus,.cat-btn:focus,.tab:focus,.entrar-btn:focus,.wpp-copy-btn:focus,.wpp-send-btn:focus,.enviar-btn:focus{outline:none;box-shadow:none;}
 .qty-val{width:34px;text-align:center;font-size:11px;font-family:var(--mono);color:var(--text);}
 .final-price{font-size:11px;font-family:var(--mono);font-weight:500;color:var(--accent);}
 .add-btn{
@@ -685,8 +688,11 @@ async function carregarHistorico(){
   if(!cliente){el.innerHTML='<div class="hist-empty">Faça sua identificação para ver seus pedidos.</div>';return;}
   el.innerHTML='<div class="hist-empty">Carregando...</div>';
   try{
-    const url=`${API_URL}?action=buscarPedidos&email=${encodeURIComponent(cliente.email)}&telefone=${encodeURIComponent(cliente.telefone)}`;
-    const res=await fetch(url,{method:"GET",mode:"cors"});
+    const res=await fetch(API_URL,{
+      method:"POST",
+      mode:"cors",
+      body:JSON.stringify({action:"buscarPedidos",email:cliente.email,telefone:cliente.telefone})
+    });
     const data=await res.json();
     if(!data.ok||!data.pedidos.length){
       el.innerHTML='<div class="hist-empty">Nenhum pedido encontrado ainda.</div>';return;
