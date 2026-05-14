@@ -109,63 +109,48 @@ td:nth-child(7),th:nth-child(7){width:36px;}
   }
   td:nth-child(4)::before{content:"100g";font-size:10px;color:var(--faint);}
 
-  /* + e - com valor: linha 2, col central
-     O .qty-ctrl fica em coluna para que o valor fique no meio,
-     alinhado com o texto "mín." que tem ~24px de altura total */
+  /* + e - com botão carrinho: linha 2, col 2 e 3 juntas */
   td:nth-child(5){
-    grid-column:2;grid-row:2;
+    grid-column:2/4;grid-row:2;
     justify-content:center;
     align-items:center;
+    gap:8px;
   }
-
   td:nth-child(5) .qty-ctrl{
-    display:flex;
-    flex-direction:row;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    margin:0 auto;
+    display:flex;flex-direction:row;align-items:center;gap:4px;
   }
   td:nth-child(5) .qty-btn{
     width:24px!important;height:24px!important;font-size:16px!important;
   }
   td:nth-child(5) .qty-val{
-    width:36px!important;
-    font-size:11px!important;
-    text-align:center;
-    line-height:1;
+    width:36px!important;font-size:11px!important;text-align:center;
   }
 
-  /* Total: linha 3, col central, centralizado */
+  /* Total: linha 3, col central */
   td:nth-child(6){
     grid-column:2;grid-row:3;
     font-size:13px;font-weight:600;color:var(--accent);
-    justify-content:center;
-    align-items:center;
+    justify-content:center;align-items:center;
   }
-  td:nth-child(6) .final-price{
-    display:block;width:100%;text-align:center;
-  }
+  td:nth-child(6) .final-price{display:block;width:100%;text-align:center;}
 
-  /* Carrinho: linhas 2 e 3, col direita */
+  /* Carrinho: linha 2, col direita — ao lado do + */
   td:nth-child(7){
-    grid-column:1/4;grid-row:3;
-    justify-content:center;
-    align-items:center;
-    margin-top:4px;
+    grid-column:3;grid-row:2;
+    justify-content:flex-end;align-items:center;
+    padding-right:4px;
   }
   td:nth-child(7) button{
     display:flex!important;
-    width:auto!important;height:36px!important;
-    font-size:13px!important;font-weight:600!important;
-    padding:0 10px!important;
+    width:auto!important;height:30px!important;
+    font-size:12px!important;font-weight:600!important;
+    padding:0 8px!important;
     background:var(--accent-light)!important;
     border-color:var(--accent)!important;
     color:var(--accent)!important;
-    white-space:nowrap;
-    gap:5px;
+    white-space:nowrap;gap:4px;
   }
-  td:nth-child(7) button::after{content:" Adicionar";}
+  td:nth-child(7) button::after{content:"Adicionar ao carrinho";}
 }
 .in-cart-badge{display:inline-flex;align-items:center;gap:2px;background:var(--accent-light);color:var(--accent);font-size:10px;font-weight:600;padding:1px 5px;border-radius:20px;margin-top:5px;}
 tr.in-cart td{background:#f4fbf6;}
