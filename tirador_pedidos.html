@@ -460,7 +460,6 @@ function mostrarClienteLogado(){
 }
 
 function deslogar(){
-  if(!confirm("Deseja sair da sua conta?"))return;
   localStorage.removeItem("cliente");
   cliente=null;
   document.getElementById("cliente-info-bar").style.display="none";
@@ -688,11 +687,8 @@ async function carregarHistorico(){
   if(!cliente){el.innerHTML='<div class="hist-empty">Faça sua identificação para ver seus pedidos.</div>';return;}
   el.innerHTML='<div class="hist-empty">Carregando...</div>';
   try{
-    const res=await fetch(API_URL,{
-      method:"POST",
-      mode:"cors",
-      body:JSON.stringify({action:"buscarPedidos",email:cliente.email,telefone:cliente.telefone})
-    });
+    const url=API_URL+"?action=buscarPedidos&email="+encodeURIComponent(cliente.email)+"&telefone="+encodeURIComponent(cliente.telefone);
+    const res=await fetch(url);
     const data=await res.json();
     if(!data.ok||!data.pedidos.length){
       el.innerHTML='<div class="hist-empty">Nenhum pedido encontrado ainda.</div>';return;
