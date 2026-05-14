@@ -93,7 +93,7 @@ td:nth-child(7),th:nth-child(7){width:36px;}
     text-align:center;font-size:13px;font-weight:600;
   }
 
-  /* Preço kg: posicionado absolutamente — alinhado com borda SUPERIOR do botão */
+  /* Preço kg: fixado no lado esquerdo, alinhado com borda superior do botão */
   td:nth-child(3){
     position:absolute;
     left:12px;
@@ -103,7 +103,7 @@ td:nth-child(7),th:nth-child(7){width:36px;}
   }
   td:nth-child(3)::before{content:"kg";font-size:10px;color:var(--faint);}
 
-  /* Preço 100g: posicionado absolutamente — alinhado com borda INFERIOR do botão */
+  /* Preço 100g: fixado no lado esquerdo, próximo ao kg */
   td:nth-child(4){
     position:absolute;
     left:12px;
@@ -113,28 +113,22 @@ td:nth-child(7),th:nth-child(7){width:36px;}
   }
   td:nth-child(4)::before{content:"100g";font-size:10px;color:var(--faint);}
 
-  /* + e −: linha 2, coluna direita */
+  /* + e −: linha 2, col direita */
   td:nth-child(5){
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-60%);
+    grid-column:2;grid-row:2;
     justify-content:center;align-items:center;
   }
   td:nth-child(5) .qty-btn{width:26px!important;height:26px!important;font-size:17px!important;}
   td:nth-child(5) .qty-val{width:34px!important;font-size:11px!important;text-align:center;}
 
-  /* Total: linha 3, coluna direita */
+  /* Total: linha 3, col direita */
   td:nth-child(6){
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,10%);
+    grid-column:2;grid-row:3;
     justify-content:center;align-items:center;
     font-size:13px;font-weight:600;color:var(--accent);
   }
 
-  /* Botão: absolutamente posicionado na borda direita */
+  /* Botão: fixado a right:32px, centralizado verticalmente */
   td:nth-child(7){
     position:absolute;
     right:32px;
