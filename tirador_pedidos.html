@@ -78,6 +78,7 @@ td:nth-child(7),th:nth-child(7){width:36px;}
     grid-template-columns:80px 1fr 44px;
     grid-template-rows:auto auto auto;
     gap:6px 0;
+    position:relative;
   }
   tr.in-cart{background:#f4fbf6;}
   td{padding:0;border:none;display:flex;align-items:center;}
@@ -91,7 +92,7 @@ td:nth-child(7),th:nth-child(7){width:36px;}
     flex-direction:column;align-items:center;
   }
 
-  /* Preço/kg: linha 2, col esquerda com margem */
+  /* Preço/kg: linha 2, col esquerda */
   td:nth-child(3){
     grid-column:1;grid-row:2;
     font-size:11px;color:var(--muted);
@@ -100,7 +101,7 @@ td:nth-child(7),th:nth-child(7){width:36px;}
   }
   td:nth-child(3)::before{content:"kg";font-size:10px;color:var(--faint);}
 
-  /* Preço/100g: linha 3, col esquerda com margem */
+  /* Preço/100g: linha 3, col esquerda */
   td:nth-child(4){
     grid-column:1;grid-row:3;
     font-size:11px;color:var(--muted);
@@ -109,19 +110,32 @@ td:nth-child(7),th:nth-child(7){width:36px;}
   }
   td:nth-child(4)::before{content:"100g";font-size:10px;color:var(--faint);}
 
-  /* + e -: linha 2, col central, centralizado com o nome */
+  /* + e -: linha 2, col central — exatamente no meio */
   td:nth-child(5){
     grid-column:2;grid-row:2;
+    display:flex;
     justify-content:center;
     align-items:center;
+    width:100%;
+  }
+  td:nth-child(5) .qty-ctrl{
+    margin:0 auto;
   }
 
-  /* Total: linha 3, col central, centralizado com o nome */
+  /* Total: linha 3, col central — exatamente no meio */
   td:nth-child(6){
     grid-column:2;grid-row:3;
     font-size:13px;font-weight:600;color:var(--accent);
+    display:flex;
     justify-content:center;
     align-items:center;
+    width:100%;
+    text-align:center;
+  }
+  td:nth-child(6) .final-price{
+    display:block;
+    width:100%;
+    text-align:center;
   }
 
   /* Carrinho: linhas 2 e 3, col direita */
