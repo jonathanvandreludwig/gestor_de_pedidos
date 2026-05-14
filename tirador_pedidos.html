@@ -682,38 +682,56 @@ function renderCart(){
 
 // ── Histórico ─────────────────────────────────────────────
 
-async function carregarHistorico(){
+function carregarHistorico(){
   const el=document.getElementById("hist-list");
-  if(!cliente){el.innerHTML='<div class="hist-empty">Faça sua identificação para ver seus pedidos.</div>';return;}
-  el.innerHTML='<div class="hist-empty">Carregando...</div>';
-  try{
-    const url=API_URL+"?action=buscarPedidos&email="+encodeURIComponent(cliente.email)+"&telefone="+encodeURIComponent(cliente.telefone);
-    const res=await fetch(url);
-    const data=await res.json();
-    if(!data.ok||!data.pedidos.length){
-      el.innerHTML='<div class="hist-empty">Nenhum pedido encontrado ainda.</div>';return;
-    }
-    el.innerHTML=data.pedidos.map(p=>{
-      let itens=[];
-      try{itens=JSON.parse(p.itens);}catch(e){}
-      return`<div class="hist-card">
-        <div class="hist-header">
-          <div>
-            <div class="hist-id">Pedido #${p.numero}</div>
-            <div class="hist-data">${p.data}</div>
-          </div>
-          <span class="hist-status ${p.status==="Aguardando separação"?"aguardando":p.status==="Pedido concluído"?"concluido":"outros"}">${p.status}</span>
-        </div>
-        ${itens.map(i=>{
-          const qtdFmt=i.qty>=1000?(i.qty/1000).toFixed(1).replace(".",",")+"kg":i.qty+"g";
-          return`<div class="hist-item">• ${i.nome} — ${qtdFmt}</div>`;
-        }).join("")}
-        <div class="hist-total"><span>Total</span><span class="hist-total-val">${p.total}</span></div>
-      </div>`;
-    }).join("");
-  }catch(e){
-    el.innerHTML='<div class="hist-empty">Erro ao carregar pedidos: '+e.message+'</div>';
+  if(!cliente){
+    el.innerHTML='<div class="hist-empty">Faça sua identificação para ver seus pedidos.</div>';
+    return;
   }
+  el.innerHTML='<div class="hist-empty">Carregando...</div>';
+
+  // Remove script JSONP anterior
+  const oldScript=document.getElementById("jsonp-script");
+  if(oldScript)oldScript.remove();
+
+  // Callback global que processa a resposta
+  window._jsonpCallback=function(data){
+    if(!data.ok||!data.pedidos.length){
+      el.innerHTML='<div class="hist-empty">Nenhum pedido encontrado ainda.</div>';
+      return;
+    }
+    el.innerHTML=data.pedidos.map(function(p){
+      var itens=[];
+      try{itens=JSON.parse(p.itens);}catch(e){}
+      var statusClass=p.status==="Aguardando separação"?"aguardando":p.status==="Pedido concluído"?"concluido":"outros";
+      return'<div class="hist-card">'+
+        '<div class="hist-header">'+
+          '<div>'+
+            '<div class="hist-id">Pedido #'+p.numero+'</div>'+
+            '<div class="hist-data">'+p.data+'</div>'+
+          '</div>'+
+          '<span class="hist-status '+statusClass+'">'+p.status+'</span>'+
+        '</div>'+
+        itens.map(function(i){
+          var qtdFmt=i.qty>=1000?(i.qty/1000).toFixed(1).replace(".",",")+"kg":i.qty+"g";
+          return'<div class="hist-item">• '+i.nome+' — '+qtdFmt+'</div>';
+        }).join("")+
+        '<div class="hist-total"><span>Total</span><span class="hist-total-val">'+p.total+'</span></div>'+
+      '</div>';
+    }).join("");
+  };
+
+  // Criar tag script para JSONP
+  var script=document.createElement("script");
+  script.id="jsonp-script";
+  script.src=API_URL+"?action=buscarPedidos"+
+    "&email="+encodeURIComponent(cliente.email)+
+    "&telefone="+encodeURIComponent(cliente.telefone)+
+    "&callback=_jsonpCallback";
+  script.onerror=function(){
+    el.innerHTML='<div class="hist-empty">Erro ao carregar. Tente novamente.</div>';
+  };
+  document.body.appendChild(script);
 }
 
 // ── Confetti & Sucesso ────────────────────────────────────
